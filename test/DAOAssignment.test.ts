@@ -2,9 +2,7 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 
 async function mine(blocks: number) {
-  for (let i = 0; i < blocks; i++) {
-    await ethers.provider.send("evm_mine", []);
-  }
+  for (let i = 0; i < blocks; i++) await ethers.provider.send("evm_mine", []);
 }
 
 async function increaseTime(seconds: number) {
@@ -60,7 +58,7 @@ describe("DAO assignment: governance + timelock + treasury upgrade", function ()
     expect(await governor.state(proposalId)).to.equal(4); // Succeeded
     await (await governor.queue(targets, values, calldatas, ethers.id(description))).wait();
     expect(await governor.state(proposalId)).to.equal(5); // Queued
-    return { proposalId };
+    return proposalId;
   }
 
   it("runs proposal -> vote -> queue -> timelock -> execute for an ETH transfer", async function () {
@@ -80,7 +78,7 @@ describe("DAO assignment: governance + timelock + treasury upgrade", function ()
   });
 
   it("upgrades the treasury through a successful governance proposal and preserves balance", async function () {
-    const { governor, treasury, recipient, TreasuryImpl } = await deploySystem();
+    const { governor, treasury, timelock } = await deploySystem();
     expect(await treasury.version()).to.equal(1n);
     const balanceBefore = await treasury.balance();
 
@@ -98,8 +96,6 @@ describe("DAO assignment: governance + timelock + treasury upgrade", function ()
     const upgradedTreasury = TreasuryV2.attach(await treasury.getAddress());
     expect(await upgradedTreasury.version()).to.equal(2n);
     expect(await upgradedTreasury.balance()).to.equal(balanceBefore);
-    expect(await upgradedTreasury.owner()).to.equal(await (await ethers.getContractAt("@openzeppelin/contracts/governance/TimelockController.sol:TimelockController", await (await deploySystem()).timelock.getAddress())).getAddress());
-    expect(await TreasuryImpl.getDeployTransaction()).to.exist;
-    expect(recipient.address).to.not.equal(ethers.ZeroAddress);
+    expect(await upgradedTreasury.owner()).to.equal(await timelock.getAddress());
   });
 });
