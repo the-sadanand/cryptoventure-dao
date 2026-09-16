@@ -2,15 +2,20 @@
 pragma solidity ^0.8.20;
 
 import {Initializable} from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
-import {OwnableUpgradeable} from "@openzeppelin/contracts/access/OwnableUpgradeable.sol";
 import {UUPSUpgradeable} from "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
 
-contract Treasury is Initializable, OwnableUpgradeable, UUPSUpgradeable {
+contract Treasury is Initializable, UUPSUpgradeable {
+    address public owner;
     uint256 public versionNumber;
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Treasury: not owner");
+        _;
+    }
 
     function initialize(address governanceExecutor) external initializer {
         require(governanceExecutor != address(0), "Treasury: zero executor");
-        __Ownable_init(governanceExecutor);
+        owner = governanceExecutor;
         versionNumber = 1;
     }
 
