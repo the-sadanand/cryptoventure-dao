@@ -2,6 +2,7 @@
 pragma solidity ^0.8.20;
 
 import {Governor} from "@openzeppelin/contracts/governance/Governor.sol";
+import {IGovernor} from "@openzeppelin/contracts/governance/IGovernor.sol";
 import {GovernorCountingSimple} from "@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol";
 import {GovernorVotes} from "@openzeppelin/contracts/governance/extensions/GovernorVotes.sol";
 import {GovernorVotesQuorumFraction} from "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol";
@@ -23,23 +24,12 @@ contract MyGovernor is
         GovernorTimelockControl(timelock_)
     {}
 
-    function votingDelay() public pure override returns (uint256) {
-        return 1;
-    }
-
-    function votingPeriod() public pure override returns (uint256) {
-        return 5;
-    }
-
-    function proposalThreshold() public pure override returns (uint256) {
-        return 0;
-    }
+    function votingDelay() public pure override returns (uint256) { return 1; }
+    function votingPeriod() public pure override returns (uint256) { return 5; }
+    function proposalThreshold() public pure override returns (uint256) { return 0; }
 
     function state(uint256 proposalId)
-        public
-        view
-        override(Governor, GovernorTimelockControl)
-        returns (ProposalState)
+        public view override(Governor, GovernorTimelockControl) returns (ProposalState)
     {
         return super.state(proposalId);
     }
@@ -73,19 +63,13 @@ contract MyGovernor is
     }
 
     function _executor()
-        internal
-        view
-        override(Governor, GovernorTimelockControl)
-        returns (address)
+        internal view override(Governor, GovernorTimelockControl) returns (address)
     {
         return super._executor();
     }
 
     function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        override(Governor, GovernorTimelockControl)
-        returns (bool)
+        public view override(Governor, GovernorTimelockControl) returns (bool)
     {
         return super.supportsInterface(interfaceId);
     }
