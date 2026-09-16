@@ -5,9 +5,11 @@
   "scripts": {
     "compile": "hardhat compile",
     "test": "hardhat test",
+    "test:assignment": "hardhat test test/DAOAssignment.test.ts",
     "test:coverage": "hardhat coverage",
     "test:gas": "REPORT_GAS=true hardhat test",
     "deploy:local": "hardhat run scripts/deploy.ts --network localhost",
+    "deploy:assignment": "hardhat run scripts/task-deploy.ts --network localhost",
     "deploy:sepolia": "hardhat run scripts/deploy.ts --network sepolia",
     "node": "hardhat node",
     "clean": "hardhat clean",
