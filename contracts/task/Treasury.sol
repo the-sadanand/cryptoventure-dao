@@ -27,7 +27,7 @@ contract Treasury is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         require(ok, "Treasury: transfer failed");
     }
 
-    function version() external view returns (uint256) {
+    function version() external view virtual returns (uint256) {
         return versionNumber;
     }
 
